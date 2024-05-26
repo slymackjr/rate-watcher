@@ -167,13 +167,21 @@ class _MyHomePageState extends State<MyHomePage> {
 */
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rate_watcher/pages/account_page.dart';
 import 'package:rate_watcher/pages/exchange_page.dart';
 import 'package:rate_watcher/pages/conversion_page.dart';
 import 'package:rate_watcher/themes/ratewatcher_theme.dart';
 
+import 'currency_provider.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CurrencyProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -195,7 +203,7 @@ class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
   @override
-  _MainPageState createState() => _MainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
