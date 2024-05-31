@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../pair_conversion.dart';
 
 class ConversionPage extends StatefulWidget {
@@ -13,8 +12,13 @@ class _ConversionPageState extends State<ConversionPage> {
   final TextEditingController _controller = TextEditingController();
   String _conversionResult = '';
   final String _apiKey = 'd18ab53713e43aec5f97c9f2';
-  final String _baseCurrency = 'USD';
-  final String _targetCurrency = 'TZS';
+
+  String _baseCurrency = 'USD'; // Default base currency
+  String _targetCurrency = 'TZS'; // Default target currency
+
+  final List<String> _supportedCurrencies = [
+    'USD', 'EUR', 'GBP', 'PLN', 'KES', 'BIF', 'ZMW', 'TZS', 'MWK', 'RWF'
+  ];
 
   void _convertCurrency() async {
     final double? amount = double.tryParse(_controller.text);
@@ -55,11 +59,47 @@ class _ConversionPageState extends State<ConversionPage> {
                 controller: _controller,
                 readOnly: true, // Disable editing and keyboard input
                 decoration: const InputDecoration(
-                  labelText: 'Enter USD',
+                  labelText: 'Enter Amount',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                DropdownButton<String>(
+                  value: _baseCurrency,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _baseCurrency = newValue!;
+                    });
+                  },
+                  items: _supportedCurrencies.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(width: 10),
+                const Icon(Icons.compare_arrows),
+                const SizedBox(width: 10),
+                DropdownButton<String>(
+                  value: _targetCurrency,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _targetCurrency = newValue!;
+                    });
+                  },
+                  items: _supportedCurrencies.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -104,7 +144,9 @@ class _ConversionPageState extends State<ConversionPage> {
                 buildNumericButton('0'),
                 ElevatedButton(
                   onPressed: () {
-                    _controller.clear();
+                    setState(() {
+                      _controller.clear();
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
@@ -122,10 +164,23 @@ class _ConversionPageState extends State<ConversionPage> {
               child: const Text('Convert'),
             ),
             const SizedBox(height: 16),
-            Text(
-              _conversionResult,
-              style: const TextStyle(fontSize: 20),
-            ),
+            _conversionResult.isNotEmpty
+                ? Card(
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              margin: const EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  _conversionResult,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+                : const SizedBox.shrink(),
           ],
         ),
       ),
@@ -135,9 +190,9 @@ class _ConversionPageState extends State<ConversionPage> {
   Widget buildNumericButton(String label) {
     return ElevatedButton(
       onPressed: () {
-        if (label != 'C' && label != '⌫') {
+        setState(() {
           _controller.text += label;
-        }
+        });
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).primaryColor,
@@ -146,9 +201,3 @@ class _ConversionPageState extends State<ConversionPage> {
     );
   }
 }
-
-
-
-
-
-

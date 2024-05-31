@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:country_flags/country_flags.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../standard_response.dart';
 import '../currency_provider.dart';
@@ -15,6 +16,7 @@ class ExchangePage extends StatefulWidget {
 class _ExchangePageState extends State<ExchangePage> {
   final String apiKey = 'd18ab53713e43aec5f97c9f2';
   late Future<Map<String, double>> _conversionRates;
+  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -26,7 +28,7 @@ class _ExchangePageState extends State<ExchangePage> {
     String conversionFor = context.read<CurrencyProvider>().selectedCurrency;
     try {
       final response = await StandardResponse.fetchData(apiKey, conversionFor);
-      return response.getConversionRatesFor(['EUR','USD', 'GBP', 'PLN', 'KES', 'BIF', 'ZMW', 'TZS', 'MWK', 'RWF']);
+      return response.getConversionRatesFor(['EUR', 'USD', 'GBP', 'PLN', 'KES', 'BIF', 'ZMW', 'TZS', 'MWK', 'RWF']);
     } catch (e) {
       throw Exception('Failed to load conversion rates');
     }
@@ -44,6 +46,25 @@ class _ExchangePageState extends State<ExchangePage> {
     'MWK': 'MW',
     'RWF': 'RW',
   };
+
+  void _refreshRates() async {
+    setState(() {
+      _isRefreshing = true;
+    });
+
+    try {
+      final newRates = await fetchConversionRates();
+      setState(() {
+        _conversionRates = Future.value(newRates);
+        _isRefreshing = false;
+      });
+    } catch (e) {
+      setState(() {
+        _conversionRates = Future.error(e);
+        _isRefreshing = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +84,30 @@ class _ExchangePageState extends State<ExchangePage> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
+                        return Center(
+                          child: Text(
+                            'Error: ${snapshot.error}',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        );
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('No data available', style: TextStyle(color: Colors.white)));
+                        return const Center(
+                          child: Text(
+                            'No data available',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        );
                       } else {
                         final rates = snapshot.data!;
                         return ListView(
                           children: rates.entries.map((entry) {
                             return ExchangeRateTile(
-                              currencyPair: '${context.read<CurrencyProvider>().selectedCurrency} -> ${entry.key}',
+                              currencyPair:
+                              '${context.read<CurrencyProvider>().selectedCurrency} -> ${entry.key}',
                               rate: '${entry.value.toStringAsFixed(2)} ${entry.key}',
                               change: '', // Placeholder for change, could be updated if change data is available
-                              countryCode: currencyToCountry[entry.key] ?? 'US', // Default to 'US' if no mapping found
+                              countryCode:
+                              currencyToCountry[entry.key] ?? 'US', // Default to 'US' if no mapping found
                             );
                           }).toList(),
                         );
@@ -107,13 +140,11 @@ class _ExchangePageState extends State<ExchangePage> {
             'Exchange',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
           ),
-          IconButton(
+          _isRefreshing
+              ? const CircularProgressIndicator(color: Colors.white)
+              : IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              setState(() {
-                _conversionRates = fetchConversionRates();
-              });
-            },
+            onPressed: _refreshRates,
           ),
         ],
       ),
@@ -139,19 +170,59 @@ class ExchangeRateTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        tileColor: Colors.white24,
-        leading: CountryFlag.fromCountryCode(
-          countryCode,
-          height: 30,
-          width: 30,
-          borderRadius: 8.0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white24,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black45,
+              blurRadius: 5.0,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
-        title: Text(currencyPair, style: const TextStyle(color: Colors.white)),
-        subtitle: Text('Change: $change', style: const TextStyle(color: Colors.white60)),
-        trailing: Text(rate, style: const TextStyle(color: Colors.white)),
+        child: ListTile(
+          leading: ClipOval(
+            child: CountryFlag.fromCountryCode(
+              countryCode,
+              height: 40,
+              width: 40,
+            ),
+          ),
+          title: Row(
+            children: [
+              Text(
+                currencyPair.split(' -> ')[0],
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(width: 8),
+              const FaIcon(
+                FontAwesomeIcons.rightLeft,
+                color: Colors.white,
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                currencyPair.split(' -> ')[1],
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          subtitle: Text('Change: $change', style: const TextStyle(color: Colors.white60)),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              rate,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
       ),
     );
   }
 }
-

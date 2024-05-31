@@ -36,7 +36,6 @@ class ResponsiveButton extends StatelessWidget {
     this.isResponsive = false,
     this.width,
     required this.onPressed, // Required onPressed parameter
-    required String text,
   });
 
   @override
