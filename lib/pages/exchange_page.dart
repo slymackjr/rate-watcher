@@ -29,6 +29,7 @@ class _ExchangePageState extends State<ExchangePage> {
     try {
       final response = await StandardResponse.fetchData(apiKey, conversionFor);
       return response.getConversionRatesFor(['EUR', 'USD', 'GBP', 'PLN', 'KES', 'BIF', 'ZMW', 'TZS', 'MWK', 'RWF']);
+
     } catch (e) {
       throw Exception('Failed to load conversion rates');
     }
