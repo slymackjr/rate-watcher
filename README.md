@@ -12,6 +12,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/slymackjr/rate-watcher">
+    <img src="images/rate-watcher.png" alt="Logo">
     <h3 align="center">Rate Watcher</h3>
   </a>
 
