@@ -80,34 +80,34 @@ Rate Watcher is a Flutter application that provides users with real-time exchang
 ### Widget Tree
 The widget tree of the Rate Watcher app is structured as follows:
 
-![Rate Watcher Widget Tree](path/to/widget-tree.png)
+![Rate Watcher Widget Tree](images/widget-tree.jpg)
 
 ### UI Design
 
 #### Welcome Page
 The Welcome Page introduces the app features through rotating slides with titles, descriptions, and feature-related images.
 
-![Welcome Page](path/to/welcome-page.png)
+![Welcome Page](images/welcome-page.png)
 
 #### Main Page
 The Main Page serves as the primary navigation hub with a bottom navigation bar for switching between Account, Exchange, and Conversion pages.
 
-![Main Page](path/to/main-page.png)
+![Main Page](images/main-page.png)
 
 #### Account Page
 Displays selected currency details, including flag and country name, with horizontal currency selection.
 
-![Account Page](path/to/account-page.png)
+![Account Page](images/account-page.png)
 
 #### Exchange Rate Page
 Shows real-time exchange rates with country flags and a refresh button to update rates.
 
-![Exchange Rate Page](path/to/exchange-rate-page.png)
+![Exchange Rate Page](images/exchange-rate-page.png)
 
 #### Conversion Page
 Enables currency conversion with numeric input, dropdown menus for base and target currencies, and a conversion button.
 
-![Conversion Page](path/to/conversion-page.png)
+![Conversion Page](images/conversion-page.png)
 
 ### State Management
 The app uses `Provider` for centralized state management of currency data and user interactions.
