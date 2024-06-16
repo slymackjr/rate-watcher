@@ -159,4 +159,4 @@ Project Link: [https://github.com/slymackjr/rate-watcher](https://github.com/sly
 [license-shield]: https://img.shields.io/github/license/slymackjr/rate-watcher.svg?style=for-the-badge
 [license-url]: https://github.com/slymackjr/rate-watcher/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/in/jofrey-nyamasheki-9bb8781ab
+[linkedin-url]: https://www.linkedin.com/in/jofrey-nyamasheki-9bb8781ab?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
